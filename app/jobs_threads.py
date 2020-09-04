@@ -9,8 +9,7 @@ import time
 import json
 
 from app import unicore_communication, hub_communication,\
-    tunnel_utils, orchestrator_communication, utils_file_loads, jobs_utils,\
-    unicore_utils
+    tunnel_utils, orchestrator_communication, utils_file_loads, jobs_utils
 from app.unity_communication import renew_token
 from app.utils import remove_secret
 from app.jobs_utils import stop_job
@@ -82,7 +81,7 @@ def get(app_logger, uuidcode, request_headers, unicore_header, app_urls, cert):
                             app_logger.debug("uuidcode={} - Could not get properties. Sleep for 2 seconds and try again".format(uuidcode))
                             time.sleep(2)
                         else:
-                            app_logger.error("uuidcode={} - UNICORE RESTART REQUIRED!!. system: {}".format(uuidcode, request_headers.get('system', '<system_unknown>')))
+                            app_logger.error("uuidcode={} - Could not get properties. system: {}".format(uuidcode, request_headers.get('system', '<system_unknown>')))
                             app_logger.warning("uuidcode={} - Could not get properties. UNICORE/X Response: {} {} {}".format(uuidcode, text, status_code, remove_secret(response_header)))
                             app_logger.warning("uuidcode={} - Do not send update to JupyterHub.".format(uuidcode))
                             # If JupyterHub don't receives an update for a long time it can stop the job itself.
@@ -240,7 +239,8 @@ def get(app_logger, uuidcode, request_headers, unicore_header, app_urls, cert):
                                         cert,
                                         request_headers.get('jhubtoken'),
                                         request_headers.get('escapedusername'),
-                                        servername)
+                                        servername,
+                                        app_urls.get('orchestrator', {}).get('url_hostname'))
                 except:
                     orchestrator_communication.set_skip(app_logger,
                                                         uuidcode,
