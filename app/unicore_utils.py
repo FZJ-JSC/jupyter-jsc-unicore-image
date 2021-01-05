@@ -167,7 +167,16 @@ def create_unicore8_job(app_logger, uuidcode, request_json, project, unicore_inp
         app_logger.trace("uuidcode={} - UNICORE/X Job: {}".format(uuidcode, job))
         return job
     if unicorex_info.get(request_json.get('system').upper(), {}).get('queues', False):
-        job['Resources'] = { 'Queue': request_json.get('partition')}
+        if unicorex_info.get(request_json.get('system').upper(), {}).get('partitions', {}).get('ALL', '') != '':
+            job['Resources'] = {
+                "Queue": unicorex_info.get(request_json.get('system').upper(), {}).get('partitions', {}).get('ALL', '')
+            }
+        elif unicorex_info.get(request_json.get('system').upper(), {}).get('partitions', {}).get(request_json.get('partition'), '') != '':
+            job['Resources'] = {
+                "Queue": unicorex_info.get(request_json.get('system').upper(), {}).get('partitions', {}).get(request_json.get('partition'), '')
+            }
+        else:
+            job['Resources'] = { 'Queue': request_json.get('partition')}
     else:
         job['Resources'] = {}
     if request_json.get('reservation', None):
@@ -243,7 +252,16 @@ def create_unicore8_job_dashboard(app_logger, uuidcode, request_json, project, u
         app_logger.trace("uuidcode={} - UNICORE/X Job: {}".format(uuidcode, job))
         return job
     if unicorex_info.get(request_json.get('system').upper(), {}).get('queues', False):
-        job['Resources'] = { 'Queue': request_json.get('partition')}
+        if unicorex_info.get(request_json.get('system').upper(), {}).get('partitions', {}).get('ALL', '') != '':
+            job['Resources'] = {
+                "Queue": unicorex_info.get(request_json.get('system').upper(), {}).get('partitions', {}).get('ALL', '')
+            }
+        elif unicorex_info.get(request_json.get('system').upper(), {}).get('partitions', {}).get(request_json.get('partition'), '') != '':
+            job['Resources'] = {
+                "Queue": unicorex_info.get(request_json.get('system').upper(), {}).get('partitions', {}).get(request_json.get('partition'), '')
+            }
+        else:
+            job['Resources'] = { 'Queue': request_json.get('partition')}
     else:
         job['Resources'] = {}
     if request_json.get('reservation', None):
